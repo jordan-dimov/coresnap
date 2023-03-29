@@ -26,12 +26,17 @@ def parse_text_outline(outline: str) -> list[T_NODE]:
     lines = outline.strip().split("\n")
     nodes = []
 
-    for line in lines:
+    for idx, line in enumerate(lines):
         indent = len(re.match(r"\s*", line).group(0))
         title_clean, title_sanitized = create_node(line)
-        nodes.append(
-            {"title": title_clean, "title_sanitized": title_sanitized, "level": indent}
-        )
+        node = {
+            "title": title_clean,
+            "title_sanitized": title_sanitized,
+            "level": indent,
+        }
+        if idx == 0:  # Root node
+            node["penwidth"] = 3
+        nodes.append(node)
 
     return nodes
 
@@ -49,9 +54,13 @@ def outline_to_dot(nodes: list[T_NODE]) -> str:
     stack = []
     for node in nodes:
         title_clean, title_sanitized = node["title"], node["title_sanitized"]
+        penwidth = node.get("penwidth", 1)
+
         indent = node["level"]
 
-        dot_lines.append(f'{title_sanitized} [label="{title_clean}"];')
+        dot_lines.append(
+            f'{title_sanitized} [label="{title_clean}", penwidth={penwidth}];'
+        )
 
         while len(stack) > 0 and stack[-1]["level"] >= indent:
             stack.pop()
