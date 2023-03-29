@@ -1,5 +1,6 @@
 import re
 import typer
+import graphviz
 
 
 def sanitize_title(title):
@@ -46,7 +47,18 @@ def outline_to_dot(outline):
     return "\n".join(dot_lines)
 
 
-def main(input_file: str, output_file: str = "output.dot"):
+def render(dot_file: str, output_file: str, output_format: str = "png"):
+    with open(dot_file, "r") as f:
+        dot_content = f.read()
+
+    graph = graphviz.Source(dot_content)
+    graph.format = output_format.lower()
+    graph.render(output_file.rpartition(".")[0], cleanup=True)
+
+    typer.echo(f"Image rendered as '{output_file}'.")
+
+
+def notes_to_tree(input_file: str, output_file: str = "output.dot"):
     with open(input_file, "r") as f:
         outline = f.read()
 
@@ -58,8 +70,11 @@ def main(input_file: str, output_file: str = "output.dot"):
         f.write(dot_content)
 
     typer.echo(f"DOT file saved as '{output_file}'. Use this to render: ")
-    typer.echo(f"dot -Tpng {output_file} -o {input_stem}.png")
+    typer.echo(f"coresnap.py render {output_file} {input_stem}.png --output-format=png")
 
 
 if __name__ == "__main__":
-    typer.run(main)
+    app = typer.Typer()
+    app.command("convert")(notes_to_tree)
+    app.command("render")(render)
+    app()

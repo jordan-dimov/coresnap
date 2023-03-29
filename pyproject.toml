@@ -8,6 +8,7 @@ license = "Creative Commons"
 [tool.poetry.dependencies]
 python = "^3.10"
 typer = "^0.7.0"
+graphviz = "^0.20.1"
 
 [tool.poetry.dev-dependencies]
 black = "^23.3.0"
