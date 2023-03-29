@@ -3,19 +3,40 @@ import typer
 import graphviz
 
 
-def sanitize_title(title):
+def sanitize_title(title: str) -> str:
+    # Replace all non-alphanumeric characters with underscores, so title can be used as a node ID
     title_sanitized = re.sub(r"[^\w\s]", "_", title).replace(" ", "_")
     return title_sanitized
 
 
-def create_node(title):
+def create_node(title: str) -> (str, str):
     title_clean = title.lstrip().lstrip("-").strip()
     title_sanitized = sanitize_title(title_clean)
-    return (title_clean, title_sanitized)
+    return title_clean, title_sanitized
 
 
-def outline_to_dot(outline):
+T_NODE = dict[str, str | int]
+
+
+def parse_text_outline(outline: str) -> list[T_NODE]:
+    # Takes the input text as indented bullet list and returns a list of nodes containing the title,
+    # sanitized title, and the indentation level.
+    # TODO: Add parsers for other formats
+
     lines = outline.strip().split("\n")
+    nodes = []
+
+    for line in lines:
+        indent = len(re.match(r"\s*", line).group(0))
+        title_clean, title_sanitized = create_node(line)
+        nodes.append(
+            {"title": title_clean, "title_sanitized": title_sanitized, "level": indent}
+        )
+
+    return nodes
+
+
+def outline_to_dot(nodes: list[T_NODE]) -> str:
     dot_lines = [
         "digraph G {",
         "rankdir=LR;",
@@ -26,9 +47,9 @@ def outline_to_dot(outline):
     ]
 
     stack = []
-    for line in lines:
-        indent = len(re.match(r"\s*", line).group(0))
-        title_clean, title_sanitized = create_node(line)
+    for node in nodes:
+        title_clean, title_sanitized = node["title"], node["title_sanitized"]
+        indent = node["level"]
 
         dot_lines.append(f'{title_sanitized} [label="{title_clean}"];')
 
@@ -39,9 +60,7 @@ def outline_to_dot(outline):
             parent = stack[-1]
             dot_lines.append(f'{parent["title_sanitized"]} -> {title_sanitized}')
 
-        stack.append(
-            {"title": title_clean, "title_sanitized": title_sanitized, "level": indent}
-        )
+        stack.append(node)
 
     dot_lines.append("}")
     return "\n".join(dot_lines)
@@ -62,7 +81,8 @@ def notes_to_tree(input_file: str, output_file: str = "output.dot"):
     with open(input_file, "r") as f:
         outline = f.read()
 
-    dot_content = outline_to_dot(outline)
+    nodes = parse_text_outline(outline)
+    dot_content = outline_to_dot(nodes)
 
     input_stem = input_file.rpartition(".")[0]
 
