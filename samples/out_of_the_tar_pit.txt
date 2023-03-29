@@ -1,0 +1,21 @@
+- Out of the Tar Pit
+  - Complexity in software systems
+    - Primary obstacle to high-quality software
+    - Accidental complexity
+      - Unnecessary complexity from tools and techniques
+      - Increases errors and maintenance difficulties
+    - Essential complexity
+      - Inherent complexity of problem domain
+      - Necessary for problem-solving
+  - Reducing complexity
+    - Importance of simplifying software development
+    - Improve quality and maintainability
+  - Functional Relational Programming (FRP)
+    - Approach to minimize accidental complexity
+    - Combination of functional programming and relational databases
+      - Simplifying state management
+      - Separation of concerns
+      - Minimizing code
+  - Influence on software development practices
+    - FRP as a conceptual basis
+    - Better practices and structures to reduce complexity
