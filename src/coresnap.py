@@ -15,32 +15,6 @@ def create_node(title):
 
 def outline_to_dot(outline):
     lines = outline.strip().split("\n")
-    dot_lines = ["digraph G {", "rankdir=TB;", "node [shape=box];", "splines=ortho;"]
-
-    stack = []
-    for line in lines:
-        indent = len(re.match(r"\s*", line).group(0))
-        title_clean, title_sanitized = create_node(line)
-
-        dot_lines.append(f'{title_sanitized} [label="{title_clean}"];')
-
-        while len(stack) > 0 and stack[-1]["level"] >= indent:
-            stack.pop()
-
-        if len(stack) > 0:
-            parent = stack[-1]
-            dot_lines.append(f'{parent["title_sanitized"]} -> {title_sanitized}')
-
-        stack.append(
-            {"title": title_clean, "title_sanitized": title_sanitized, "level": indent}
-        )
-
-    dot_lines.append("}")
-    return "\n".join(dot_lines)
-
-
-def outline_to_dot2(outline):
-    lines = outline.strip().split("\n")
     dot_lines = [
         "digraph G {",
         "rankdir=LR;",
@@ -76,7 +50,7 @@ def main(input_file: str, output_file: str = "output.dot"):
     with open(input_file, "r") as f:
         outline = f.read()
 
-    dot_content = outline_to_dot2(outline)
+    dot_content = outline_to_dot(outline)
 
     input_stem = input_file.rpartition(".")[0]
 
