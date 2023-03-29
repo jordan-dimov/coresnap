@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "coresnap"
+version = "0.1.0"
+description = "Create visual mind-maps from the core ideas in articles, papers, books or other text"
+authors = ["Jordan Dimov <jdimov@a115.co.uk>"]
+license = "Creative Commons"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+typer = "^0.7.0"
+
+[tool.poetry.dev-dependencies]
+black = "^23.3.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
