@@ -4,6 +4,12 @@ This repo contains a Python script which visualises tree structures based on ind
 
 This project uses Poetry as the Python dependency manager. It uses GraphViz for rendering the images. You will need both of these tools installed as pre-requisites. 
 
+## Example
+
+Here is an example of a mind-map summarising the book "The Inner Game of Tennis" by Timothy Gallwey:
+
+![The Inner Game of Tennis](samples/inner_game_of_tennis.png)
+
 
 ## Step 0: Install dependencies
 
