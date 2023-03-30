@@ -11,10 +11,12 @@ typer = "^0.7.0"
 graphviz = "^0.20.1"
 openai = "^0.27.2"
 tenacity = "^8.2.2"
+mistune = "^2.0.5"
 
 [tool.poetry.dev-dependencies]
 black = "^23.3.0"
 ruff = "^0.0.260"
+ipdb = "^0.13.13"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

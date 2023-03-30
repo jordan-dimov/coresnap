@@ -22,11 +22,15 @@ def gpt_chat(messages):
     return response.choices[0].message.content.strip()
 
 
-def gpt_outline(work_title: str):
+def gpt_outline(work_title: str, version="txt"):
+    prompts = {
+        "txt": "The user will provide the title of a published text, such as a book, research paper, article. They may provide the name of the author as well. Generate a mindmap with the core ideas from the text and output it as an indented list of bullet points. Do not output anything else other than the indented list of bullet points. ",
+        "markdown": "The user will provide the title of a published text, such as a book, research paper, article. Generate a mindmap with the core ideas from the text and output it in Markdown format. Do not just mirror the Table of Contents, but actually identify and arrange the most interesting and insightful ideas. Use appropriate levels of headings and sub-headings to reflect the hierarchy of the mindmap. Select a few quotes that best illustrate the core ideas and put them under the most appropriate heading. ",
+    }
     messages = [
         {
             "role": "system",
-            "content": "The user will provide the title of a published text, such as a book, research paper, article. They may provide the name of the author as well. Generate a mindmap with the core ideas from the text and output it as an indented list of bullet points. Do not output anything else other than the indented list of bullet points. ",
+            "content": prompts[version],
         },
         {"role": "user", "content": f"Generate a mindmap of: {work_title}"},
     ]

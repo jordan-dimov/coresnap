@@ -2,7 +2,12 @@ import typer
 import graphviz
 
 from gptutils import gpt_outline
-from graph_builder import parse_text_outline, outline_to_dot, sanitize_title
+from graph_builder import (
+    parse_text_outline,
+    outline_to_dot,
+    sanitize_title,
+    parse_markdown_outline,
+)
 
 app = typer.Typer()
 
@@ -11,24 +16,29 @@ app = typer.Typer()
 def outline(
     work_title: str, outline_file: str | None = None, outline_format: str = "txt"
 ):
-    if outline_format != "txt":
+    if outline_format not in ["txt", "markdown"]:
         raise NotImplementedError(
             f"Outline format '{outline_format}' not supported yet."
         )
     clean_title = sanitize_title(work_title)
     outline_file = outline_file or f"{clean_title}.txt"
-    outline = gpt_outline(work_title)
+    outline = gpt_outline(work_title, version=outline_format)
     with open(outline_file, "w") as f:
         f.write(outline)
     typer.echo(f"Outline saved as '{outline_file}'.")
 
 
 @app.command("convert")
-def notes_to_tree(input_file: str, output_file: str = "output.dot"):
+def notes_to_tree(
+    input_file: str, output_file: str = "output.dot", outline_format: str = "txt"
+):
     with open(input_file, "r") as f:
         outline = f.read()
 
-    nodes = parse_text_outline(outline)
+    if outline_format == "txt":
+        nodes = parse_text_outline(outline)
+    elif outline_format == "markdown":
+        nodes = parse_markdown_outline(outline)
     dot_content = outline_to_dot(nodes)
 
     input_stem = input_file.rpartition(".")[0]

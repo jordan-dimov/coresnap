@@ -1,4 +1,5 @@
 import re
+import mistune
 
 T_NODE = dict[str, str | int]
 
@@ -38,6 +39,49 @@ def parse_text_outline(outline: str) -> list[T_NODE]:
     return nodes
 
 
+def parse_markdown_outline(outline: str) -> list[T_NODE]:
+    # Takes the input text as a Markdown string and returns a list of nodes containing the title,
+    # sanitized title, and the indentation level. The Markdown string is parsed using the mistune
+    # library. Only the various levels of headings are used to create the nodes.
+
+    nodes = []
+
+    renderer = mistune.renderers.AstRenderer()
+    markdown = mistune.Markdown(renderer=renderer)
+    tokens = markdown.parse(outline)
+    # Tokens are a list of dictionaries, each representing a token in the Markdown string. They
+    # look like this:
+    # [
+    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Focusing on the Present Moment'}], 'level': 3},
+    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Managing Pressure and Stress'}], 'level': 2},
+    #   {'type': 'block_quote', 'children': [{'type': 'paragraph', 'children': [{'type': 'text', 'text': '"Focus your mind on the process of learning and playing, not on the desired result."'}]}]},
+    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Developing Positive Habits'}], 'level': 2},
+    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Cultivating Self-Awareness'}], 'level': 3},
+    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Reinforcing Positive Attitudes'}], 'level': 3},
+    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Building Inner Confidence'}], 'level': 2}
+    #  ]
+
+    for token in tokens:
+        if token["type"] == "heading":
+            level = token["level"]
+            token_text = token["children"][0]["text"]
+            title_clean, title_sanitized = create_node(token_text)
+            node = {
+                "title": title_clean,
+                "title_sanitized": title_sanitized,
+                "level": level,
+            }
+            if level == 1:
+                node["penwidth"] = 3
+            nodes.append(node)
+        elif token["type"] == "block_quote":
+            last_node = nodes[-1]
+            quote_text = token["children"][0]["children"][0]["text"]
+            last_node["quote"] = quote_text
+
+    return nodes
+
+
 def outline_to_dot(nodes: list[T_NODE]) -> str:
     dot_lines = [
         "digraph G {",
@@ -55,9 +99,13 @@ def outline_to_dot(nodes: list[T_NODE]) -> str:
 
         indent = node["level"]
 
-        dot_lines.append(
-            f'{title_sanitized} [label="{title_clean}", penwidth={penwidth}];'
-        )
+        dot_line_props = f'label="{title_clean}", penwidth={penwidth}'
+        if "quote" in node:
+            quote = node["quote"].replace('"', '\\"')
+            dot_line_props += f', tooltip="{quote}"'
+        # TODO: Add support for setting the URL property to a suitable link
+        dot_line = f"{title_sanitized} [{dot_line_props}];"
+        dot_lines.append(dot_line)
 
         while len(stack) > 0 and stack[-1]["level"] >= indent:
             stack.pop()
