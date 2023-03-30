@@ -1,9 +1,26 @@
 import typer
 import graphviz
 
-from graph_builder import parse_text_outline, outline_to_dot
+from gptutils import gpt_outline
+from graph_builder import parse_text_outline, outline_to_dot, sanitize_title
 
 app = typer.Typer()
+
+
+@app.command("outline")
+def outline(
+    work_title: str, outline_file: str | None = None, outline_format: str = "txt"
+):
+    if outline_format != "txt":
+        raise NotImplementedError(
+            f"Outline format '{outline_format}' not supported yet."
+        )
+    clean_title = sanitize_title(work_title)
+    outline_file = outline_file or f"{clean_title}.txt"
+    outline = gpt_outline(work_title)
+    with open(outline_file, "w") as f:
+        f.write(outline)
+    typer.echo(f"Outline saved as '{outline_file}'.")
 
 
 @app.command("convert")

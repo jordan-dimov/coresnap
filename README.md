@@ -16,13 +16,13 @@ Here is an example of a mind-map summarising the book "The Inner Game of Tennis"
     poetry install
 
 
-## Step 1: Use GPT to summarise the body of text
+## Step 1: Use GPT to summarise and outline the body of text
 
-Here is the prompt I use:
+Make sure you have your OPENAI_API_KEY set as an environment variable, then run: 
 
-    Generate a mindmap with the core ideas from the book "The Inner Game of Tennis" and output it as an indented list of bullet points. 
+    poetry run python src/coresnap.py outline "The Inner Game of Tennis"
 
-This is the typical output:
+This should produce a text file 'The_Inner_Game_of_Tennis.txt' with contents like this:
 
     - The Inner Game of Tennis
         - Two Selves
@@ -34,6 +34,7 @@ This is the typical output:
         - Trusting the Body
             - Allowing Self 2 to guide movement
             - Avoid overthinking actions
+        - ...
 
 ## Step 2: Use the script to produce a DOT file
 
