@@ -24,7 +24,7 @@ def parse_text_outline(outline: str) -> list[T_NODE]:
     lines = outline.strip().split("\n")
     nodes = []
 
-    for idx, line in enumerate(lines):
+    for idx, line in enumerate([l for l in lines if l.strip()]):
         indent = len(re.match(r"\s*", line).group(0))
         title_clean, title_sanitized = create_node(line)
         node = {
@@ -55,10 +55,6 @@ def parse_markdown_outline(outline: str) -> list[T_NODE]:
     #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Focusing on the Present Moment'}], 'level': 3},
     #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Managing Pressure and Stress'}], 'level': 2},
     #   {'type': 'block_quote', 'children': [{'type': 'paragraph', 'children': [{'type': 'text', 'text': '"Focus your mind on the process of learning and playing, not on the desired result."'}]}]},
-    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Developing Positive Habits'}], 'level': 2},
-    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Cultivating Self-Awareness'}], 'level': 3},
-    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Reinforcing Positive Attitudes'}], 'level': 3},
-    #   {'type': 'heading', 'children': [{'type': 'text', 'text': 'Building Inner Confidence'}], 'level': 2}
     #  ]
 
     for token in tokens:

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import typer
 import graphviz
 
@@ -14,7 +16,7 @@ app = typer.Typer()
 
 @app.command("outline")
 def outline(
-    work_title: str, outline_file: str | None = None, outline_format: str = "txt"
+    work_title: str, outline_file: Optional[str]  = None, outline_format: str = "txt"
 ):
     if outline_format not in ["txt", "markdown"]:
         raise NotImplementedError(

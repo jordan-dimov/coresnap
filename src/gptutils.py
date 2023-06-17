@@ -23,9 +23,12 @@ def gpt_chat(messages):
 
 
 def gpt_outline(work_title: str, version="txt"):
+    base_prompt = "The user will provide the title of a published text, such as a book, research paper, article. They may provide the name of the author as well. Generate a mindmap with the core ideas from the text. Do not just mirror the Table of Contents, but actually identify the most interesting and insightful ideas and arrange them logically."
     prompts = {
-        "txt": "The user will provide the title of a published text, such as a book, research paper, article. They may provide the name of the author as well. Generate a mindmap with the core ideas from the text and output it as an indented list of bullet points. Do not output anything else other than the indented list of bullet points. ",
-        "markdown": "The user will provide the title of a published text, such as a book, research paper, article. Generate a mindmap with the core ideas from the text and output it in Markdown format. Do not just mirror the Table of Contents, but actually identify and arrange the most interesting and insightful ideas. Use appropriate levels of headings and sub-headings to reflect the hierarchy of the mindmap. Select a few quotes that best illustrate the core ideas and put them under the most appropriate heading. ",
+        "txt": base_prompt
+        + "Output the mindmap as an indented list of bullet points. Do not output anything else other than the indented list of bullet points. ",
+        "markdown": base_prompt
+        + "Output the mindmap in Markdown format. Use appropriate levels of headings and sub-headings to reflect the hierarchy of the mindmap. Select a few quotes that best illustrate the core ideas and put them under the most appropriate heading. ",
     }
     messages = [
         {
